@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>003-Mandelbrot</title>
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      #mycanvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h3>003-Mandelbrot Set</h3>
+      <p>
+        The mandelbrot set is visible at domain with Re(C) between -2 to +2 and
+        Im(C) -2 to +2. The canvas is 400x400 pixels to avoid slowing down too
+        much since for each pixel we compute 100 iterations of Complex number
+        multiplications, addition, magnitude. This results is 160,000 pixels *
+        100 iterations.
+      </p>
+      <p>
+        Click COMPUTE to render the mandelbrot set. Depending of your computer,
+        it may take a few seconds to render.
+      </p>
+
+      <!-- complex center point -->
+      <input type="number" id="re_C" value="0" step="1" />
+      <input type="number" id="im_C" value="0" step="1" />
+
+      <!-- zoom input -->
+      <input type="number" id="zoom" value="100" />
+
+      <button onclick="renderMandelbrot()">COMPUTE</button>
+      <button onclick="handleEventOnZoomIn()">ZOOM_IN</button>
+      <button onclick="handleEventOnZoomOut()">ZOOM_OUT</button>
+      <button onclick="html_downloadImage()">DOWNLOAD IMAGE</button>
+
+      <!-- checkbox to render debug info -->
+      <input type="checkbox" id="debug_info" />
+      <label for="debug_info">Show debug info</label>
+
+      <canvas id="mycanvas">Browser doesn't support canvas</canvas>
+    </div>
+    <script type="text/javascript">
+      class Utils {
+        // Linear interpolation (lerp) between [c, d]
+        // t is between 0 and 1
+        static lerp(c, d, t) {
+          return c + t * (d - c);
+        }
+        // Convert degrees to radians
+        static degToRad(deg) {
+          return (deg * Math.PI) / 180;
+        }
+        // Map value x from range [a, b] to range [c, d]
+        static mapRange(x, a, b, c, d) {
+          // Normalize x to [0,1]
+          let t = (x - a) / (b - a);
+          // Use lerp to find mapped value in [c, d]
+          return Utils.lerp(c, d, t);
+        }
+      }
+
+      class Complex {
+        constructor(real = 0.0, img = 0.0) {
+          this.real = real;
+          this.img = img;
+        }
+        add(other) {
+          // Input:
+          // z1 = a + bi
+          // z2 = c + di
+          // -------------
+          // Output:
+          // z = (a + c) + (b + d)i
+          return new Complex(this.real + other.real, this.img + other.img);
+        }
+        multiply(other) {
+          // Input:
+          // z1 = a + bi
+          // z2 = c + di
+          // -------------
+          // Output:
+          // z = (ac - bd) + (ad + bc)i
+          const r = this.real * other.real - this.img * other.img;
+          const i = this.real * other.img + this.img * other.real;
+          return new Complex(r, i);
+        }
+        magnitudeSquared() {
+          return this.real * this.real + this.img * this.img;
+        }
+        toString() {
+          return `(${this.real.toFixed(2)}, ${this.img.toFixed(2)}i)`;
+        }
+      }
+
+      // State
+      let canvas;
+      let fractaCanvasImage;
+      let mousePos = { x: 0, y: 0 };
+
+      // On load
+      window.onload = () => {
+        // Grab canvas
+        canvas = document.getElementById("mycanvas");
+        if (!canvas) {
+          throw new Error("Canvas element not found");
+          return;
+        }
+
+        // Set canvas dimensions to 400x400
+        canvas.width = 400;
+        canvas.height = 400;
+
+        // Set event listeners/handlers
+        canvas.addEventListener("click", (evt) => {
+          // Get mouse click position
+          const rect = canvas.getBoundingClientRect();
+          const mouseX = evt.clientX - rect.left;
+          const mouseY = evt.clientY - rect.top;
+
+          // Get current center position
+          const reCInput = document.getElementById("re_C");
+          const imCInput = document.getElementById("im_C");
+          if (!reCInput || !imCInput) {
+            throw new Error("Complex center input elements not found");
+            return;
+          }
+          const reC = parseFloat(reCInput.value);
+          const imC = parseFloat(imCInput.value);
+
+          // Map mouse to complex plane
+          const zoomInput = document.getElementById("zoom");
+          if (!zoomInput) {
+            throw new Error("Zoom input element not found");
+            return;
+          }
+          const zoom = parseInt(zoomInput.value, 10);
+          const halfComplex = 200 / zoom; // 200 is half of canvas size
+          const halfCanvasW = canvas.width / 2;
+          const halfCanvasH = canvas.height / 2;
+          const mappedRe = Utils.mapRange(
+            mouseX,
+            0,
+            canvas.width,
+            reC - halfComplex,
+            reC + halfComplex
+          );
+          const mappedIm = Utils.mapRange(
+            mouseY,
+            0,
+            canvas.height,
+            imC - halfComplex,
+            imC + halfComplex
+          );
+
+          // Compute new center point by translating center to mouse click position
+          const newReC = mappedRe;
+          const newImC = mappedIm;
+          reCInput.value = newReC;
+          imCInput.value = newImC;
+
+          // Redraw mandelbrot set with new center
+          renderMandelbrot();
+        });
+
+        canvas.addEventListener("mousemove", (evt) => {
+          const rect = canvas.getBoundingClientRect();
+          const x = evt.clientX - rect.left;
+          const y = evt.clientY - rect.top;
+          mousePos = { x, y };
+          mouseMoveDraw();
+        });
+
+        // On load draw call
+        renderMandelbrot();
+      };
+
+      function renderMandelbrot() {
+        // Get context
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          throw new Error("2D context not available");
+          return;
+        }
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Get canvas dimensions
+        const canvasW = canvas.width;
+        const canvasH = canvas.height;
+        const halfCanvasW = canvasW / 2;
+        const halfCanvasH = canvasH / 2;
+
+        // Get current zoom value
+        const zoomInput = document.getElementById("zoom");
+        if (!zoomInput) {
+          throw new Error("Zoom input element not found");
+          return;
+        }
+        const zoom = parseInt(zoomInput.value, 10);
+        const halfComplexWidth = canvas.width / 2 / zoom;
+
+        // Get complex center point from input
+        const reCInput = document.getElementById("re_C");
+        const imCInput = document.getElementById("im_C");
+        if (!reCInput || !imCInput) {
+          throw new Error("Complex center input elements not found");
+          return;
+        }
+        const reC = parseFloat(reCInput.value);
+        const imC = parseFloat(imCInput.value);
+        const complexCenter = new Complex(reC, imC);
+
+        // Refine the domain of the complex plane to render the set
+        // Get Re(C) min and max
+        const ReCompMinValue = complexCenter.real - halfComplexWidth;
+        const ReCompMaxValue = complexCenter.real + halfComplexWidth;
+        // Get Im(C) min and max
+        const ImCpxMinValue = complexCenter.img - halfComplexWidth;
+        const ImCpxMaxValue = complexCenter.img + halfComplexWidth;
+
+        // Mandelbrot set rendering
+        const MAX_IT = 100;
+        for (let px = 0; px < canvasW; px++) {
+          for (let py = 0; py < canvasH; py++) {
+            // Map pixel position to a point in the complex plane
+            const mappedRe = Utils.mapRange(
+              px,
+              0,
+              canvasW,
+              ReCompMinValue,
+              ReCompMaxValue
+            );
+            const mappedIm = Utils.mapRange(
+              py,
+              0,
+              canvasH,
+              ImCpxMinValue,
+              ImCpxMaxValue
+            );
+
+            // Create complex number for current pixel
+            const currComplexPoint = new Complex(mappedRe, mappedIm);
+
+            // Mandelbrot iteration
+            // Check if current point goes to infinity or is bounded
+            let ZZ = new Complex(0, 0);
+            let it = 0;
+            while (ZZ.magnitudeSquared() <= 4 && it < MAX_IT) {
+              ZZ = ZZ.multiply(ZZ).add(currComplexPoint);
+              it++;
+            }
+
+            // Determine if point is in the Mandelbrot set
+            // A point is in the set if does not goes to infinity
+            // If mag(ZZ) gets bigger than 2 in less than 100, it goes to infinity
+            // If we reach out 100 iterations without getting mag(ZZ) bigger than 2, it is bounded, inside the set
+            const isInsideSet = it === MAX_IT;
+
+            // Color based on iteration count
+            if (isInsideSet) {
+              // A point in the complex plane is part of the Mandelbrot set
+              // if after 100 iterations, the equation didn't exploded to infinity,
+              // ie, we hit the it>=100 condition first than mag(z) > 4.
+              // We paint those points as black.
+              ctx.fillStyle = "black";
+            } else {
+              // If a mag(z) gets bigger than 2 in less than 100 iterations,
+              // we assume that the point is going to infinity.
+              // We can visually print how "fast" it is growing by maping the # of it to a color range
+              // ctx.fillStyle = `hsl(${mapRange(
+              //   it,
+              //   0,
+              //   MAX_IT,
+              //   0,
+              //   360
+              // )}, 60%, 50%)`;
+
+              // Grayscale range
+              const value = Utils.mapRange(it, 0, MAX_IT, 255, 0);
+              ctx.fillStyle = `rgb(${value},${value},${value})`;
+            }
+            ctx.fillRect(px, py, 1, 1);
+          }
+        }
+
+        const isChecked = document.getElementById("debug_info")?.checked;
+        if (isChecked) {
+          // Render line from from (w/2, 0) to (w/2, h)
+          ctx.strokeStyle = "white";
+          ctx.beginPath();
+          ctx.moveTo(halfCanvasW, 0);
+          ctx.lineTo(halfCanvasW, canvasH);
+          ctx.stroke();
+          ctx.strokeStyle = "white";
+          ctx.beginPath();
+          ctx.moveTo(0, halfCanvasH);
+          ctx.lineTo(canvasW, halfCanvasH);
+          ctx.stroke();
+
+          // Render text about the complex center point and zoom
+          let lineY = canvasH - 10;
+          ctx.font = "16px Arial";
+          ctx.fillStyle = "white";
+          // Current center point
+          ctx.fillText(`Re(center): ${complexCenter.real}`, 10, lineY);
+          lineY -= 20;
+          ctx.fillText(`Im(center): ${complexCenter.img}`, 10, lineY);
+          lineY -= 20;
+          ctx.fillText(`Zoom: ${zoom}%`, 10, lineY);
+          lineY -= 20;
+          // Current REAL domain
+          ctx.fillText(`Domain: Re[C].min:${ReCompMinValue}})`, 10, lineY);
+          lineY -= 20;
+          ctx.fillText(`Domain: Re[C].max:${ReCompMaxValue}})`, 10, lineY);
+          lineY -= 20;
+          ctx.fillText(
+            `Im[C](${ImCpxMinValue.toFixed(2)}, ${ImCpxMaxValue.toFixed(2)})`,
+            10,
+            lineY
+          );
+        }
+
+        // Save image to avoid re-computation on mouse move
+        fractaCanvasImage = ctx.getImageData(0, 0, canvasW, canvasH);
+      }
+
+      function handleEventOnZoomIn() {
+        // Get current zoom value
+        const zoomInput = document.getElementById("zoom");
+        if (zoomInput) {
+          zoomInput.value = Math.max(100, 2 * parseInt(zoomInput.value, 10));
+        }
+
+        // redraw
+        renderMandelbrot();
+      }
+
+      function handleEventOnZoomOut() {
+        // Get current zoom value
+        const zoomInput = document.getElementById("zoom");
+        if (zoomInput) {
+          zoomInput.value = Math.max(
+            100,
+            (1 / 2) * parseInt(zoomInput.value, 10)
+          );
+        }
+
+        // redraw
+        renderMandelbrot();
+      }
+
+      // Render mouse information without re-computing the fractal
+      function mouseMoveDraw() {
+        // Check if debug info checkbox is checked
+        const debugInfoCheckbox = document.getElementById("debug_info");
+        if (!debugInfoCheckbox || !debugInfoCheckbox.checked) {
+          return;
+        }
+
+        // Get context
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          throw new Error("2D context not available");
+          return;
+        }
+
+        // Paste saved fractal image to avoid re-computation
+        if (fractaCanvasImage) {
+          ctx.putImageData(fractaCanvasImage, 0, 0);
+        }
+
+        // Draw crosshair lines at mouse position
+        ctx.strokeStyle = "red";
+        ctx.beginPath();
+        ctx.moveTo(mousePos.x, 0);
+        ctx.lineTo(mousePos.x, canvas.height);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, mousePos.y);
+        ctx.lineTo(canvas.width, mousePos.y);
+        ctx.stroke();
+      }
+
+      function html_downloadImage() {
+        // Grab canvas
+        const canvas = document.getElementById("mycanvas");
+        if (!canvas) {
+          throw new Error("Canvas element not found");
+          return;
+        }
+        // Create a link and trigger download
+        const link = document.createElement("a");
+        link.download = "mandelbrot.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      }
+    </script>
+  </body>
+</html>
