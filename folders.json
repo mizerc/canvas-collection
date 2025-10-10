@@ -1,0 +1,30 @@
+[
+  {
+    "tabButtonText": "000-Intro",
+    "iframeSrc": "./000-Intro/index.html"
+  },
+  {
+    "tabButtonText": "001-helloworld",
+    "iframeSrc": "./001-helloworld/index.html"
+  },
+  {
+    "tabButtonText": "002-requestFrameAnimation",
+    "iframeSrc": "./002-requestFrameAnimation/index.html"
+  },
+  {
+    "tabButtonText": "003-MandelbrotSet",
+    "iframeSrc": "./003-MandelbrotSet/index.html"
+  },
+  {
+    "tabButtonText": "004-putImageDataBenchmark",
+    "iframeSrc": "./004-putImageDataBenchmark/index.html"
+  },
+  {
+    "tabButtonText": "005-galaxy",
+    "iframeSrc": "./005-galaxy/index.html"
+  },
+  {
+    "tabButtonText": "006-histogram",
+    "iframeSrc": "./006-histogram/index.html"
+  }
+]
