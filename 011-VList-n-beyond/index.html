@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      #mycanvas {
+        border: 1px solid black;
+      }
+    </style>
+    <script defer src="src/Utils.js"></script>
+    <script defer src="src/Pen.js"></script>
+    <script defer src="src/Geometry.js"></script>
+    <script defer src="src/Layout.js"></script>
+    <script defer src="src/BorderLayout.js"></script>
+    <script defer src="src/StackLayout.js"></script>
+    <script defer src="src/Node.js"></script>
+    <script defer src="src/Frame.js"></script>
+    <script defer src="src/main.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Layout Systems v2</h1>
+      <p>
+        Trying to create a layout system from scratch for canvas that accepts stack based like VList and
+        HList, as well as region based layout like BorderLayout. Inspired by the
+        layout systems in Java Swing.
+      </p>
+      <canvas id="mycanvas" />
+    </div>
+  </body>
+</html>

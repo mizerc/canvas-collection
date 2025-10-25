@@ -26,5 +26,25 @@
   {
     "tabButtonText": "006-histogram",
     "iframeSrc": "./006-histogram/index.html"
+  },
+  {
+    "tabButtonText": "007-circles",
+    "iframeSrc": "./007-circles/index.html"
+  },
+  {
+    "tabButtonText": "008-particles",
+    "iframeSrc": "./008-particles/index.html"
+  },
+  {
+    "tabButtonText": "009-VList",
+    "iframeSrc": "./009-VList/index.html"
+  },
+  {
+    "tabButtonText": "010-HList",
+    "iframeSrc": "./010-HList/index.html"
+  },
+  {
+    "tabButtonText": "011-VList-n-beyond",
+    "iframeSrc": "./011-VList-n-beyond/index.html"
   }
 ]
