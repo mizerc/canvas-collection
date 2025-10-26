@@ -1,5 +1,5 @@
 # About
 
-Collection of micro projects exploring concepts of creative coding using HTML5 Canvas Context2D.
+Collection of micro-projects exploring creative coding concepts using the HTML5 Canvas 2D Context.
 
-You can see live at [https://mauricioize.dev/canvas-collection/](https://mauricioize.dev/canvas-collection/).
+Check it live at [https://mauricioize.dev/canvas-collection/](https://mauricioize.dev/canvas-collection/).
