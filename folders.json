@@ -44,7 +44,11 @@
     "iframeSrc": "./010-HList/index.html"
   },
   {
-    "tabButtonText": "011-VList-n-beyond",
-    "iframeSrc": "./011-VList-n-beyond/index.html"
+    "tabButtonText": "011-BorderCenter&Events",
+    "iframeSrc": "./011-BorderCenter&Events/index.html"
+  },
+  {
+    "tabButtonText": "012-VList-n-beyond copy",
+    "iframeSrc": "./012-VList-n-beyond copy/index.html"
   }
 ]
