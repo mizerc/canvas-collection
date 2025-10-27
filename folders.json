@@ -54,5 +54,9 @@
   {
     "tabButtonText": "020-GameOfLife",
     "iframeSrc": "./020-GameOfLife/index.html"
+  },
+  {
+    "tabButtonText": "021-Donut",
+    "iframeSrc": "./021-Donut/index.html"
   }
 ]
