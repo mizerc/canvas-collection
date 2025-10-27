@@ -15,6 +15,10 @@ class Canvas {
     this.canvas.height = h;
   }
 
+  getSize() {
+    return { w: this.canvas.width, h: this.canvas.height };
+  }
+
   putPixel(x, y, r, g, b, a = 255) {
     const data = this.pixelData;
     if (x < 0 || x >= this.canvas.width || y < 0 || y >= this.canvas.height)
@@ -44,9 +48,12 @@ class Canvas {
     this.ctx.fillText(text, x, y);
   }
 
-  strokeRect(x, y, w, h, color = "red") {
-    this.ctx.fillStyle = color;
+  strokeRect(x, y, w, h, color = "black", lineWidth = 1) {
+    this.ctx.save();
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = lineWidth;
     this.ctx.strokeRect(x, y, w, h);
+    this.ctx.restore();
   }
 
   fillRect(x, y, w, h, color = "red") {

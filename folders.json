@@ -20,20 +20,20 @@
     "iframeSrc": "./004-putImageDataBenchmark/index.html"
   },
   {
-    "tabButtonText": "005-galaxy",
-    "iframeSrc": "./005-galaxy/index.html"
+    "tabButtonText": "005-Galaxy",
+    "iframeSrc": "./005-Galaxy/index.html"
   },
   {
-    "tabButtonText": "006-histogram",
-    "iframeSrc": "./006-histogram/index.html"
+    "tabButtonText": "006-BarChart",
+    "iframeSrc": "./006-BarChart/index.html"
   },
   {
-    "tabButtonText": "007-circles",
-    "iframeSrc": "./007-circles/index.html"
+    "tabButtonText": "007-Circles",
+    "iframeSrc": "./007-Circles/index.html"
   },
   {
-    "tabButtonText": "008-particles",
-    "iframeSrc": "./008-particles/index.html"
+    "tabButtonText": "008-Circles-2",
+    "iframeSrc": "./008-Circles-2/index.html"
   },
   {
     "tabButtonText": "009-VList",
@@ -48,7 +48,11 @@
     "iframeSrc": "./011-BorderCenter&Events/index.html"
   },
   {
-    "tabButtonText": "012-VList-n-beyond copy",
-    "iframeSrc": "./012-VList-n-beyond copy/index.html"
+    "tabButtonText": "012-BorderLayout",
+    "iframeSrc": "./012-BorderLayout/index.html"
+  },
+  {
+    "tabButtonText": "020-GameOfLife",
+    "iframeSrc": "./020-GameOfLife/index.html"
   }
 ]

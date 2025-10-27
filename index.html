@@ -22,43 +22,37 @@
         height: 100vh;
       }
 
-      /* Style the tab */
       .tabButtonList {
         background-color: #f1f1f1;
         width: 30%;
         max-width: 300px;
+        height: 100vh;
+        overflow: auto;
       }
 
-      /* Style the buttons that are used to open the tab content */
       .tabButtonList button {
         display: block;
         border: none;
         background-color: rgb(226, 226, 226);
         color: black;
-        padding: 22px 16px;
+        padding: 16px 12px;
         width: 100%;
         outline: none;
         text-align: left;
         cursor: pointer;
-        transition: 0.3s;
         border-bottom: 1px solid rgb(176, 176, 176);
+        transition: 0.2s;
       }
 
-      /* Change background color of buttons on hover */
       .tabButtonList button:hover {
-        background-color: #ddd;
+        background-color: #bfbf64;
       }
 
-      /* Create an active/current "tab button" class */
       .tabButtonList button.active {
-        background-color: #8de4ff;
+        background-color: #e4e432;
       }
 
-      /* Style the tab content */
       .tabContent {
-        margin: 10px;
-        padding: 16px;
-        border: 1px solid darkgray;
         display: flex;
         flex-direction: column;
         justify-content: center;

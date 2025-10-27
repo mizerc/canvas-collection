@@ -1,0 +1,38 @@
+// mat3 usa array to represent matrix m:row:col [m00, m01, m02, m10, m11, m12]
+const mat3 = {
+  makeRotateX: (angle) => [
+    1,
+    0,
+    0,
+    0,
+    Math.cos(angle),
+    -Math.sin(angle),
+    0,
+    Math.sin(angle),
+    Math.cos(angle),
+  ],
+  makeRotateY: (angle) => [
+    Math.cos(angle),
+    0,
+    Math.sin(angle),
+    0,
+    1,
+    0,
+    -Math.sin(angle),
+    0,
+    Math.cos(angle),
+  ],
+  makeRotateZ: (angle) => [
+    Math.cos(angle),
+    -Math.sin(angle),
+    0,
+    Math.sin(angle),
+    Math.cos(angle),
+    0,
+    0,
+    0,
+    1,
+  ],
+  makeScale: (x, y, z) => [x, 0, 0, 0, y, 0, 0, 0, z],
+  makeTranslate: (x, y, z) => [1, 0, x, 0, 1, y, 0, 0, 1],
+};
