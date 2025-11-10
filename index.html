@@ -16,43 +16,45 @@
         height: 100vh;
       }
 
-      .tabContainer {
+      .pageContainer {
         display: flex;
         width: 100vw;
         height: 100vh;
       }
 
-      .tabButtonList {
-        background-color: #f1f1f1;
+      .buttonList {
+        background-color: #a7a7a7;
         width: 30%;
         max-width: 300px;
         height: 100vh;
         overflow: auto;
+        border-right: 2px solid rgb(107, 107, 107);
       }
 
-      .tabButtonList button {
+      .button {
         display: block;
         border: none;
-        background-color: rgb(226, 226, 226);
+        background-color: rgb(236, 236, 236);
         color: black;
-        padding: 16px 12px;
+        padding: 16px 8px;
         width: 100%;
         outline: none;
         text-align: left;
         cursor: pointer;
-        border-bottom: 1px solid rgb(176, 176, 176);
+        border-bottom: 1px dashed rgb(176, 176, 176);
         transition: 0.2s;
       }
 
-      .tabButtonList button:hover {
+      .button:hover {
         background-color: #bfbf64;
       }
 
-      .tabButtonList button.active {
+      .button.active {
         background-color: #e4e432;
       }
 
-      .tabContent {
+      .iframeContainer {
+        border: 0px solid black;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -61,8 +63,8 @@
       }
 
       iframe {
+        border: 0px solid black;
         display: block;
-        border: none;
         width: 100%;
         height: 100%;
         overflow: hidden;
@@ -70,54 +72,47 @@
     </style>
   </head>
   <body>
-    <div class="tabContainer">
-      <div class="tabButtonList"></div>
+    <div class="pageContainer">
+      <div class="buttonList"></div>
+      <div class="iframeContainer">
+        <iframe id="projectIframe"></iframe>
+      </div>
     </div>
     <script>
       async function start() {
-        function openTab(evt, buttonText) {
-          // 01-Hide all tab content
+        function handleButtonClick(btoEvt, buttonText) {
+          // Remove active class from all buttons
           document
-            .querySelectorAll(".tabContent")
-            .forEach((tc) => (tc.style.display = "none"));
-
-          // 02-Remove active class from all buttons
-          document
-            .querySelectorAll(".tablinks")
+            .querySelectorAll(".button")
             .forEach((b) => b.classList.remove("active"));
 
-          // Find tab by id
-          document.getElementById(buttonText).style.display = "flex";
-          evt.currentTarget.classList.add("active");
+          // Find button by text and add active class
+          const pressedButton = btoEvt.currentTarget;
+          pressedButton.classList.add("active");
+
+          // Update iframe src
+          const iframe = document.querySelector("#projectIframe");
+          iframe.src = pressedButton.dataset.iframeSrc;
         }
 
-        // Insert buttons
+        // Fetch project list
         const response = await fetch("./folders.json");
-        const CONTENT = await response.json();
-        const tabButtonList = document.querySelector(".tabButtonList");
-        CONTENT.forEach((item, index) => {
+        const PROJECT_LIST = await response.json();
+
+        // Populate button list
+        const buttonList = document.querySelector(".buttonList");
+        PROJECT_LIST.forEach((buttonItem, index) => {
           // Create button
           const button = document.createElement("button");
-          button.textContent = item.tabButtonText;
-          button.className = "tablinks";
-
-          // Add click handler to open a tab
-          button.addEventListener("click", (evt) =>
-            openTab(evt, item.tabButtonText)
+          button.textContent = buttonItem.tabButtonText;
+          button.className = "button";
+          button.dataset.iframeSrc = buttonItem.iframeSrc;
+          button.addEventListener("click", (btoEvt) =>
+            handleButtonClick(btoEvt, buttonItem.tabButtonText)
           );
 
           // Append the button to the container
-          tabButtonList.appendChild(button);
-
-          // Also create the corresponding tabContent div with iframe
-          const tabContent = document.createElement("div");
-          tabContent.id = item.tabButtonText;
-          tabContent.className = "tabContent";
-          tabContent.style.display = index === 0 ? "flex" : "none";
-          const iframe = document.createElement("iframe");
-          iframe.src = item.iframeSrc;
-          tabContent.appendChild(iframe);
-          document.querySelector(".tabContainer").appendChild(tabContent);
+          buttonList.appendChild(button);
         });
 
         // Find the button with defaultOpen and enable it
