@@ -7,6 +7,7 @@ class Particle {
     this.acceleration = new Vec2(0, 0);
     this.force = new Vec2(0, 0);
     this.mass = 10;
+    this.qt = null;
   }
   integrate(dtSec) {
     // F = m * a => a = F / m
@@ -21,11 +22,11 @@ class Particle {
     // Reset force
     this.force = new Vec2(0, 0);
   }
-  render(canvas) {
+  render(pen) {
     // Particle position
-    canvas.circle(this.position.x, this.position.y, 1, "white");
+    pen.circle(this.position.x, this.position.y, 1, "white");
     // Particle speed vector
-    // canvas.line(
+    // pen.line(
     //   this.position.x,
     //   this.position.y,
     //   this.position.x + this.velocity.x,
@@ -35,12 +36,11 @@ class Particle {
   }
 }
 class GalaxySimulator {
-  constructor(canvas) {
-    this.canvas = canvas;
+  constructor(pen) {
+    this.pen = pen;
     this.particles = [];
   }
-  buildGalaxy() {
-    const NUM_PARTICLES = 1000;
+  buildGalaxy(NUM_PARTICLES) {
     const MAX_RADIUS = 180;
     const NUM_ARMS = 3;
     const SPREAD = 1;
@@ -79,12 +79,25 @@ class GalaxySimulator {
     window.requestAnimationFrame(this.loop);
   };
   loop = () => {
+    const t0 = performance.now();
     this.integrate();
     this.render();
+    const t1 = performance.now();
+    [`delta: ${t1 - t0}ms`].map((text, idx) => {
+      this.pen.text(text, 10, 20 + idx * 20, "white", "16px Arial");
+    });
     window.requestAnimationFrame(this.loop);
   };
   integrate = () => {
     const dtSec = 16 / 1000;
+
+    // 1) build quadtree each frame
+    this.qt = new QuadTree({ x: 0, y: 0, w: W, h: H }, 4);
+    for (let i = 0; i < this.particles.length; i++) {
+      this.qt.insert(this.particles[i]);
+    }
+
+    // 2) compute forces and integrate motion
     for (let i = 0; i < this.particles.length; i++) {
       const p = this.particles[i];
       // Big mass at center of canvas
@@ -108,15 +121,20 @@ class GalaxySimulator {
     }
   };
   render = () => {
-    this.canvas.clear("black");
+    this.pen.clear("black");
+    // Draw particles
     for (let i = 0; i < this.particles.length; i++) {
-      this.particles[i].render(this.canvas);
+      this.particles[i].render(this.pen);
+    }
+    // Draw quadtree
+    if (this.qt) {
+      this.qt.render(this.pen);
     }
   };
 }
 window.onload = () => {
   const pen = new Pen(document.getElementById("mycanvas"), W, H);
   const galaxy = new GalaxySimulator(pen);
-  galaxy.buildGalaxy();
+  galaxy.buildGalaxy(100);
   galaxy.startLoop();
 };

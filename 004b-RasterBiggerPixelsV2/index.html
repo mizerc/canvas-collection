@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-direction: row;
+      }
+      #mycanvas {
+        border: 1px solid black;
+      }
+    </style>
+    <script defer type="module" src="main.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Raster Bigger Pixel V2</h1>
+      <p>Study case on how to scale a smaller canvas to a larger canvas with pixelated effect</p>
+      <div class="row">
+        <a href="#" onclick="setGridSize(1)">Size 1</a>
+        <a href="#" onclick="setGridSize(10)">Size 10</a>
+        <a href="#" onclick="setGridSize(20)">Size 20</a>
+        <a href="#" onclick="setGridSize(50)">Size 50</a>
+        <a href="#" onclick="setGridSize(100)">Size 100</a>
+      </div>
+      <canvas id="mycanvas" />
+    </div>
+  </body>
+</html>

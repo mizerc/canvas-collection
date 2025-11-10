@@ -20,8 +20,24 @@
     "iframeSrc": "./004-putImageDataBenchmark/index.html"
   },
   {
+    "tabButtonText": "004b-RasterBiggerPixels",
+    "iframeSrc": "./004b-RasterBiggerPixels/index.html"
+  },
+  {
+    "tabButtonText": "004b-RasterBiggerPixelsV2",
+    "iframeSrc": "./004b-RasterBiggerPixelsV2/index.html"
+  },
+  {
     "tabButtonText": "005-Galaxy",
     "iframeSrc": "./005-Galaxy/index.html"
+  },
+  {
+    "tabButtonText": "005b-Nbody",
+    "iframeSrc": "./005b-Nbody/index.html"
+  },
+  {
+    "tabButtonText": "005c-NbodyQuadTree",
+    "iframeSrc": "./005c-NbodyQuadTree/index.html"
   },
   {
     "tabButtonText": "006-BarChart",
@@ -58,5 +74,13 @@
   {
     "tabButtonText": "021-Donut",
     "iframeSrc": "./021-Donut/index.html"
+  },
+  {
+    "tabButtonText": "022-SandPixel",
+    "iframeSrc": "./022-SandPixel/index.html"
+  },
+  {
+    "tabButtonText": "023-RasterLine",
+    "iframeSrc": "./023-RasterLine/index.html"
   }
 ]
