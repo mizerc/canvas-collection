@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-direction: row;
+      }
+      #mycanvas {
+        border: 1px solid black;
+      }
+    </style>
+    <script defer src="main.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Drop File</h1>
+      <p>Drop your file here or press the button to usa the default image</p>
+      <!-- INSERT_YOUR_CODE -->
+      <input
+        type="file"
+        id="fileInput"
+        style="display: none"
+        accept="image/*"
+        onchange="handleFileInput(this)"
+      />
+      <button onclick="document.getElementById('fileInput').click();">
+        Choose Image File
+      </button>
+      <div
+        id="dropzone"
+        style="
+          width: 300px;
+          height: 100px;
+          border: 2px dashed #888;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #888;
+          margin: 8px 0;
+          cursor: pointer;
+        "
+        ondragover="event.preventDefault();"
+        ondrop="handleDrop(event)"
+      >
+        Drop image here
+      </div>
+      <button onclick="useDefaultImage()">Use Default Image</button>
+      <div class="row">
+        <a href="#" onclick="applyGrayFilter(1)">Size 1</a>
+      </div>
+      <canvas id="mycanvas" />
+    </div>
+  </body>
+</html>
