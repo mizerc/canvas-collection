@@ -2,6 +2,7 @@ const W = 600;
 const H = 600;
 
 window.onload = () => {
+  // DOM Canvas
   const canvas = document.getElementById("mycanvas");
   canvas.width = W;
   canvas.height = H;

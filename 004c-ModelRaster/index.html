@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-direction: row;
+      }
+      #mycanvas {
+        border: 1px solid black;
+      }
+    </style>
+    <!-- Include our JavaScript entry point -->
+    <script defer type="module" src="main.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Simple raster</h1>
+      <canvas id="mycanvas" />
+    </div>
+  </body>
+</html>
